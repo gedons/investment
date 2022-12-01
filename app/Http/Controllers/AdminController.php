@@ -36,7 +36,10 @@ class AdminController extends Controller
 
     public function activities()
     {
-        return view('admin.activities');
+        $activities = Investment::all();
+        $sum = Investment::sum('amount');
+
+        return view('admin.activities', compact('activities','sum'));
     }
 
     public function message()
