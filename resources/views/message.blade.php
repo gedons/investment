@@ -19,7 +19,6 @@
 
     <!-- Custom styles for this template-->
     <link href="{{asset('dash/css/sb-admin-2.min.css')}}" rel="stylesheet">
-    <link href="{{asset('dash/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
 
 </head>
 
@@ -32,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin.dashboard')}}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('home')}}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -44,7 +43,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{route('admin.dashboard')}}">
+                <a class="nav-link" href="{{route('home')}}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -56,6 +55,7 @@
             <div class="sidebar-heading">
                 Interface
             </div>
+
 
             <!-- Nav Item - Utilities Collapse Menu -->
              <li class="nav-item">
@@ -197,10 +197,11 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
+                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Message</h1>
+                         <a href="{{route('home')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"> Back </a>
                     </div>
-
                     <!-- Content Row -->
                     <div class="row">
 
@@ -222,61 +223,44 @@
                             </div>
                         </div>
                     </div>
-                                    @if(Session::has('message'))
-                                    <p class="alert alert-success">{{ Session::get('message') }}</p>
-                                    @endif
-                                    @if(Session::has('danger'))
-                                    <p class="alert alert-danger">{{ Session::get('danger') }}</p>
-                                    @endif
-                                    @if(Session::has('update'))
-                                    <p class="alert alert-success">{{ Session::get('update') }}</p>
-                                    @endif
-                                        <!-- DataTales Example -->
-                                        <div class="card shadow mb-4">
-                                          <div class="card-header py-3">
-                                              <h6 class="m-0 font-weight-bold text-primary">Available Investment</h6>
-                                          </div>
-                                          <div class="card-body">
-                                              <div class="table-responsive">                                              
-                                                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                                    <thead>
-                                                          <tr>
-                                                              <th>Name</th>
-                                                              <th>Amount</th>
-                                                              <th>Description</th>
-                                                              <th>Time Created</th>
-                                                              <th>Action</th>                                                              
-                                                          </tr>
-                                                      </thead>
-                                                      <tfoot>
-                                                          <tr>
-                                                            <th>Name</th>
-                                                            <th>Amount</th>
-                                                            <th>Description</th>
-                                                            <th>Time Created</th>
-                                                            <th>Action</th>
-                                                          </tr>
-                                                      </tfoot>
-                                                      <tbody>
-                                                        @foreach($investments as $investment) 
-                                                          <tr>
-                                                              <td>{{$investment->name}}</td>
-                                                              <td><b>$</b> {{number_format($investment->amount)}}</td>
-                                                              <td>{{$investment->description}}</td>
-                                                              <td>{{$investment->created_at->diffForHumans()}}</td>
-                                                              <td>
-                                                                 <a href="{{route('activities')}}" class="btn btn-light" style="color:rgb(129, 118, 230)">View</a>
-                                                               
-                                                                </td>
-                                                          </tr>
-                                                          @endforeach
-                                                      </tbody>                                                 
-                                                  </table>
-                                                 
-                                              </div>
-                                          </div>
-                                      </div>
-                  
+
+                    <div class="card" style="height:100px;">
+                        <div class="card-header">{{ __('New Message') }}</div>
+                        <div id="messages"></div>
+                    </div><br/>
+
+                    <div class="card">
+                        
+                        
+                        <div class="card-body">
+                            <form id="message_form">
+                                <div class="row mb-3">
+                                    <label for="username" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
+        
+                                    <div class="col-md-6">
+                                        <input id="username" type="text" class="form-control" name="username">
+                                    </div>
+                                </div>
+        
+                                <div class="row mb-3">
+                                    <label for="message" class="col-md-4 col-form-label text-md-end">{{ __('Message') }}</label>
+        
+                                    <div class="col-md-6">
+                                        <textarea name="message" id="message_input" class="form-control"></textarea>
+                                    </div>
+                                </div>
+        
+        
+                                <div class="row mb-0">
+                                    <div class="col-md-6 offset-md-4">
+                                        <button type="submit" id="message_send" class="btn btn-primary">
+                                            {{ __('Send') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -319,42 +303,11 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                         <a class="btn btn-primary" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
+                    <a class="btn btn-primary" href="{{ route('admin.logout')}}">Logout</a>
                 </div>
             </div>
         </div>
     </div>
-
-        <!-- Delete Modal-->
-<!--      <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Are You Sure?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Delete" Below. Action Cannot Be Undone!</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <form action="{{route('invest.delete', $investment->id)}}" method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                     </form>
-                </div>
-            </div>
-        </div>
-    </div> -->
 
     <!-- Bootstrap core JavaScript-->
     <script src="{{asset('dash/vendor/jquery/jquery.min.js')}}"></script>
@@ -366,20 +319,7 @@
     <!-- Custom scripts for all pages-->
     <script src="{{asset('dash/js/sb-admin-2.min.js')}}"></script>
 
-    <!-- Page level plugins -->
-    <script src="{{asset('dash/vendor/chart.js/Chart.min.js')}}"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="{{asset('dash/js/demo/chart-area-demo.js')}}"></script>
-    <script src="{{asset('dash/js/demo/chart-pie-demo.js')}}"></script>
-
-
-     <!-- Page level plugins -->
-     <script src="{{asset('dash/vendor/datatables/jquery.dataTables.min.js')}}"></script>
-     <script src="{{asset('dash/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
- 
-     <!-- Page level custom scripts -->
-     <script src="{{asset('dash/js/demo/datatables-demo.js')}}"></script>
+    @vite(['resources/js/app.js'])
 
 </body>
 
